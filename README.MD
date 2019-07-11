@@ -1,3 +1,5 @@
+ 
+
 
 ## mongoimport中有几个参数
 
@@ -14,11 +16,7 @@
 –skip：跳过指定数量的数据；
 –limit：读取指定数量的数据记录；
 –sort：对数据进行排序，可以通过参数指定排序的字段，并使用 1 和 -1 来指定排序的方式，其中 1 为升序排列，而-1是用于降序排列,如sort({KEY:1})
---------------------- 
-作者：南郭闲笙 
-来源：CSDN 
-原文：https://blog.csdn.net/liu_jiachen/article/details/80250429 
-版权声明：本文为博主原创文章，转载请附上博文链接！
+ 
 
 
 ## 创建数据目录
@@ -172,3 +170,80 @@ db.posts.find({} , {_id:0}).skip(3).limit(3);
 ```
 
 ## 文档更新
+* update(<filter> , <update>, <option> )
+
+官方文档 https://docs.mongodb.com/manual/reference/method/db.collection.update/
+
+```bash
+
+db.posts.findOne({'title':"test the world of monster hunter"});
+db.posts.update({'title':"test the world of monster hunter"},{$set:{'rankd':10}})
+db.posts.find();
+db.posts.update({'tag':'it'} , {$set:{'rank':50} })// 默认是只更新第一条文档
+db.posts.update({'tag':'it'} , {$set:{'rank':50},{multi:true} })//更新多条
+
+db.posts.update({'title':"test the world of monster hunter"},{'rank':101}) //这条语句没有加$set 会把整条数据变成'rank':101 , 其他字段都会没有掉
+ 
+
+```
+
+## 几个特殊函数
+
+* $inc 递加
+* $mul 相乘
+* $rename 字段改名
+* $set 新增/修改 有则修改,无则新增
+* $unset 字段删除
+
+```bash
+$ mongo
+use blog 
+db.posts.find({title:"card mario Trial experience"},{_id:0} ) ;
+db.posts.update({title:"card mario Trial experience"},{$inc:{rank:3}}); // 让rank 增 3
+db.posts.update({title:"card mario Trial experience"},{$mul:{rank:2}}); // 乘以2
+db.posts.update({title:"card mario Trial experience"},{$rename:{'rank':'score'}});
+db.posts.update({title:"card mario Trial experience"},{$set:{'istop':false }}); //把istop 设为 false
+
+db.posts.update({title:"card mario Trial experience"},{$unset:{'istop':false }});  // 删除字段 不管后面的值是什么
+
+```
+## 文档的特殊更新
+
+* upsert: 有则更新,无则追加 upsert = update + insert
+* remove: 条件删除数据
+
+```bash
+mongo
+use blog
+
+db.posts.update({title:"this is a good game"  } , {title:"this is a good game" , rank:5,tag:"game"}) ; // 因为不存在这样的数据 , 所以没有原来数据不变
+db.posts.find();
+db.posts.update({title:"this is a good game"  } , {title:"this is a good game" , "rank":5,"tag":"game"},{upsert:true}) ;  // 有则更新,无则追加
+db.posts.find();
+db.posts.remove({title:"this is a good game" });
+db.posts.find({},{_id:0});
+```
+
+## 使用索引 
+
+* getIndexes()
+* createIndex({},{})
+* dropIndex({})
+
+```bash
+
+mongo
+use blog
+db.posts.getIndexes();
+db.posts.createIndex({rank:-1}); // 建立rank 降序 索引
+db.posts.getIndexes();
+db.posts.dropIndex({rank:-1});
+db.posts.getIndexes();
+db.posts.createIndex({title:1},{unique:true}); // 建立title 升序索引 并且是唯一索引 
+db.posts.getIndexes();
+db.posts.find({},{_id:0});
+db.posts.insert({title:"this is a bad game"})
+
+```
+
+https://www.youtube.com/watch?v=w-4jUzkHJok&list=PLliocbKHJNwvYvA3paPKUg86qLKrwuNsd&index=14
