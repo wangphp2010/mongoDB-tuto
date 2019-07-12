@@ -1,9 +1,10 @@
  
 git remote add origin https://github.com/wangphp2010/mongoDB-tuto.git
+
 git push -u origin master
 
 
-## mongoimport中有几个参数
+### mongoimport中有几个参数
 
 -h,–host ：代表远程连接的数据库地址，默认连接本地Mongo数据库；
 –port：代表远程连接的数据库的端口，默认连接的远程端口27017；
@@ -268,7 +269,7 @@ $ mongo blog
 > db.posts.remove({});
 > db.posts.find({},{_id:0});
 > exit;
-$ mongorestore --drop
+$ mongorestore --drop // drop去掉当前数据,并用数据库文件进行恢复
 $ mongo blog
 > db.posts.find({},{_id:0});
 > exit;
