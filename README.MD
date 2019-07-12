@@ -1,4 +1,6 @@
  
+git remote add origin https://github.com/wangphp2010/mongoDB-tuto.git
+git push -u origin master
 
 
 ## mongoimport中有几个参数
@@ -246,4 +248,31 @@ db.posts.insert({title:"this is a bad game"})
 
 ```
 
-https://www.youtube.com/watch?v=w-4jUzkHJok&list=PLliocbKHJNwvYvA3paPKUg86qLKrwuNsd&index=14
+## 备份和恢复
+
+* mongodump
+* mongorestore
+
+```bash
+$ mongo
+> show dbs;
+> use blog;
+> db.posts.find({},{_id:0});
+> exit
+$ mkdir dbbak
+$ cd dbbak
+$ mongodump -d blog // 需要先增加环境变量
+$ ls/dir // linux 用ls/wins用dir
+$ mongo blog
+> db.posts.find({},{_id:0});
+> db.posts.remove({});
+> db.posts.find({},{_id:0});
+> exit;
+$ mongorestore --drop
+$ mongo blog
+> db.posts.find({},{_id:0});
+> exit;
+$ mongodump --help
+ 
+
+```
